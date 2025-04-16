@@ -23,7 +23,7 @@
     async function checkAccess() {
       try {
         // 1. نجيبو الدولة من API سريع
-        const countryRes = await fetch("https://api.country.is");
+        const countryRes = await fetch("https://ipapi.co/json/");
         const countryData = await countryRes.json();
         const country = countryData.country;
 

